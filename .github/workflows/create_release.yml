@@ -1,0 +1,52 @@
+name: Create Release
+concurrency:
+  group: create_release
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  netframework_build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Generate Release Info
+        run: |
+          set -ex
+          version="1.0"
+          last_version=$(git tag -l --sort=creatordate | grep -E '^([0-9]+\.){2}[0-9]+$' | tail -n1)
+
+          if [ -n "$last_version" ]; \
+          then last_build_number=$(echo "$last_version" | grep -oE "[0-9]+$"); \
+          git log origin/master --first-parent  --format="%s%n%w(0,4,4)%b" "$last_version".. | grep -v "^$" > patch_notes.txt; \
+          sed -i '1s/^/```\n/' patch_notes.txt; \
+          new_build_number=$((1+$last_build_number)); \
+          else new_build_number=0; printf '```\nInitial Release' > patch_notes.txt; \
+          fi;
+
+          new_version="$version"."$new_build_number"
+          echo "new_version=$new_version" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          export DOTNET_CLI_TELEMETRY_OPTOUT=1
+          assembly_version="${{ env.new_version }}"
+          dotnet build --configuration Debug -p:Version="$assembly_version" --verbosity normal "DOLConfig.sln"
+          dotnet build --configuration Release -p:Version="$assembly_version" --verbosity normal "DOLConfig.sln"
+      - name: Compress Build Artifacts
+        run: |
+          (cd Debug && zip ../DOLConfig_Debug.zip -r .)
+          (cd Release && zip ../DOLConfig_Release.zip -r .)
+      - name: Create Release
+        run: |
+          set -ex
+          new_version_tag="${{ env.new_version }}"
+          gh release create "$new_version_tag" --title "$new_version_tag" --notes-file patch_notes.txt DOLConfig_*.zip
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
