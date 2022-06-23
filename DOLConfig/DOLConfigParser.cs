@@ -1,61 +1,54 @@
 ﻿using System;
+using System.Data;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using DOL.GS;
-using System.Data;
 
 namespace DOLConfig
 {
 	static class DOLConfigParser
 	{
-		/// <summary>
-		/// The general serverconfig filename
-		/// </summary>
-		private static string configFileName = "serverconfig.xml";
+		private static string configFilePath;
 
-		/// <summary>
-		/// Gets the path to the folder of the config file
-		/// </summary>
-		/// <returns></returns>
-		private static string getConfigPath()
+		public static string GetConfigFileLocation()
 		{
-			string appConfigPath = Application.StartupPath + Path.DirectorySeparatorChar + "config";
-			if (!Directory.Exists(appConfigPath))
+			if(!string.IsNullOrEmpty(configFilePath)) return configFilePath;
+
+			var baseFolder = GetDolServerFolder();
+			var defaultFolder = Application.StartupPath;
+			if(string.IsNullOrEmpty(baseFolder)) baseFolder = defaultFolder;
+
+			var configFolder = Path.Combine(baseFolder, "config");
+			if (!Directory.Exists(configFolder))
 			{
-				Directory.CreateDirectory(appConfigPath);
+				Directory.CreateDirectory(configFolder);
 			}
-			return appConfigPath;
-		}
 
-		/// <summary>
-		/// Get the path of the config file
-		/// </summary>
-		/// <returns></returns>
-		public static string getCurrentConfigFile()
-		{
-			string configFilePath = getConfigPath() + Path.DirectorySeparatorChar + configFileName;
+			configFilePath = Path.Combine(configFolder, "serverconfig.xml");
 			return configFilePath;
 		}
 
+		private static string GetDolServerFolder()
+		{
+			var dolServerFileNames = new[]{"DOLServer","DOLServer.dll"};
+			var probingPaths = new[]{".", ".."}
+				.Select(x => dolServerFileNames.Select(y => new FileInfo(Path.Combine(Application.StartupPath,x,y))))
+				.SelectMany(x => x);
+			var dolServerFile = probingPaths.Where(x => x.Exists)
+				.Select(x => x.DirectoryName)
+				.FirstOrDefault();
+			return dolServerFile;
+		}
 
-		/// <summary>
-		/// Gets the current configuration of the GameServer
-		/// </summary>
-		/// <returns></returns>
 		public static GameServerConfiguration getCurrentConfiguration()
 		{
-			try
-			{
-				FileInfo configFileInfo = new FileInfo(getCurrentConfigFile());
-				GameServerConfiguration config = new GameServerConfiguration();
-				config.LoadFromXMLFile(configFileInfo);
+			FileInfo configFileInfo = new FileInfo(GetConfigFileLocation());
+			GameServerConfiguration config = new GameServerConfiguration();
+			config.LoadFromXMLFile(configFileInfo);
 
-				return config;
-			}
-			catch {
-				throw;
-			}
+			return config;
 		}
 
 		/// <summary>
@@ -67,7 +60,7 @@ namespace DOLConfig
 		{
 			try
 			{
-				FileInfo configFileInfo = new FileInfo(getCurrentConfigFile());
+				FileInfo configFileInfo = new FileInfo(GetConfigFileLocation());
 				gsc.SaveToXMLFile(configFileInfo);
 			}
 			catch (Exception e)
@@ -87,7 +80,7 @@ namespace DOLConfig
 				"serverconfig_extraproperties" +
 				".xml";
 			
-			string config_file = getCurrentConfigFile();
+			string config_file = GetConfigFileLocation();
 
 			if (!File.Exists(config_file)) throw new FileNotFoundException();
 			if (!File.Exists(base_file)) throw new FileNotFoundException();
@@ -172,7 +165,7 @@ namespace DOLConfig
 		/// <param name="ds">The DataSet which holds the data</param>
 		public static void saveExtraOptions(DataSet ds)
 		{
-			string config_file = getCurrentConfigFile();
+			string config_file = GetConfigFileLocation();
 
 			if (!File.Exists(config_file)) throw new FileNotFoundException();
 
