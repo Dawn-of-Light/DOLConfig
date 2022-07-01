@@ -71,9 +71,9 @@ namespace DOL.GS
 
             RootDirectory = new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName;
 
-            LogConfigFile = Path.Combine(Path.Combine(".", "config"), "logconfig.xml");
+            LogConfigFile = Path.Combine(".", "config", "logconfig.xml");
 
-            ScriptCompilationTarget = Path.Combine(Path.Combine(".", "lib"), "GameServerScripts.dll");
+            ScriptCompilationTarget = Path.Combine(".", "lib", "GameServerScripts.dll");
             ScriptAssemblies = " ";
             EnableCompilation = true;
             AutoAccountCreation = true;
@@ -82,10 +82,10 @@ namespace DOL.GS
             m_cheatLoggerName = "cheats";
             m_gmActionsLoggerName = "gmactions";
             InventoryLoggerName = "inventories";
-            m_invalidNamesFile = Path.Combine(Path.Combine(".", "config"), "invalidnames.txt");
+            m_invalidNamesFile = Path.Combine(".", "config", "invalidnames.txt");
 
             DBType = ConnectionType.DATABASE_SQLITE;
-            DBConnectionString = $"Data Source={Path.Combine(RootDirectory, "dol.sqlite3.db")}";
+            DBConnectionString = $"Data Source={Path.Combine(".", "dol.sqlite3.db")}";
             AutoSave = true;
             SaveInterval = 10;
         }
