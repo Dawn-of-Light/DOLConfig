@@ -32,7 +32,7 @@ namespace DOLConfig
 
 		private static string GetDolServerFolder()
 		{
-			var dolServerFileNames = new[]{"DOLServer","DOLServer.dll"};
+			var dolServerFileNames = new[]{"DOLServer.exe","DOLServer.dll"};
 			var probingPaths = new[]{".", ".."}
 				.Select(x => dolServerFileNames.Select(y => new FileInfo(Path.Combine(Application.StartupPath,x,y))))
 				.SelectMany(x => x);
