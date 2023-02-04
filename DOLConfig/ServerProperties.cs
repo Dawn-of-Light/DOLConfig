@@ -35,7 +35,10 @@ namespace DOLConfig
                 db.RegisterDataObject(typeof(ServerProperty));
                 db.RegisterDataObject(typeof(ServerPropertyCategory));
 				sp = db.SelectAllObjects<ServerProperty>().ToList();
-				sc = db.SelectAllObjects<ServerPropertyCategory>().ToList();
+				var distinctCategories = sp.Select(s => s.Category).Distinct().OrderBy(c => c);
+				sc = distinctCategories
+					.Select(c => new ServerPropertyCategory(){BaseCategory=c, ParentCategory=null, DisplayName=c})
+					.Distinct().ToList();
 			}
 			catch
 			{
@@ -49,17 +52,14 @@ namespace DOLConfig
 			// no SP_C table
 			if (sc.Count == 0)
 			{
-				foreach (var current in sp)
-				{
-					tv_spShow.Nodes.Add(FormatNodeText(0, current.Key, current.Value));
-					tv_spShow.Nodes[tv_spShow.Nodes.Count-1].ForeColor = Color.Blue;
-				}
+				var formattedTextNodes = sp.Select(s => new TreeNode(FormatNodeText(0,s.Key, s.Value)){ForeColor=Color.Blue});
+				tv_spShow.Nodes.AddRange(formattedTextNodes.ToArray());
 			}
-			else
-				// creation of the SP map
+			else 
+			{
 				CreateSPMap(null, tv_spShow.Nodes,0);
-			
-			// how many SP we have ? 1.6millions ? :D
+			}
+
 			toolstrip_status_label.Text ="Loaded: " + sp.Count() + " server properties.";
 		}
 		
