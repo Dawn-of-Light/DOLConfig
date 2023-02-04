@@ -28,6 +28,11 @@ namespace DOL.Database
 			{
 				return m_category;
 			}
+			set
+			{
+				m_category = value;
+				Dirty = true;
+			}
 		}
 
 		[PrimaryKey]
