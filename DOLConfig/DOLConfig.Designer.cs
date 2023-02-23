@@ -1738,7 +1738,7 @@
 			this.Name = "DolConfig";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Dawn of Light Configuration Service";
+			this.Text = "Dawn of Light Server Configurator";
 			this.Load += new System.EventHandler(this.DOLConfig_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();

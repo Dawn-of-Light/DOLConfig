@@ -1,22 +1,4 @@
-﻿/*
- * DAWN OF LIGHT - The first free open source DAoC server emulator
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- */
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
@@ -139,22 +121,22 @@ namespace DOLConfig
 
 			switch (currentConfig.ServerType)
 			{
-				case DOL.eGameServerType.GST_PvP:
+				case eGameServerType.GST_PvP:
 					game_type_selectbox.SelectedItem = "PvP";
 					break;
-				case DOL.eGameServerType.GST_PvE:
+				case eGameServerType.GST_PvE:
 					game_type_selectbox.SelectedItem = "PvE";
 					break;
-				case DOL.eGameServerType.GST_Roleplay:
+				case eGameServerType.GST_Roleplay:
 					game_type_selectbox.SelectedItem = "Roleplay";
 					break;
-				case DOL.eGameServerType.GST_Casual:
+				case eGameServerType.GST_Casual:
 					game_type_selectbox.SelectedItem = "Casual";
 					break;
-				case DOL.eGameServerType.GST_Test:
+				case eGameServerType.GST_Test:
 					game_type_selectbox.SelectedItem = "Test";
 					break;
-				case DOL.eGameServerType.GST_Normal:
+				case eGameServerType.GST_Normal:
 				default:
 					game_type_selectbox.SelectedItem = "Normal";
 					break;
@@ -245,23 +227,23 @@ namespace DOLConfig
 			switch (game_type_selectbox.SelectedItem.ToString().ToLower())
 			{
 				case "pvp":
-					currentConfig.ServerType = DOL.eGameServerType.GST_PvP;
+					currentConfig.ServerType = eGameServerType.GST_PvP;
 					break;
 				case "pve":
-					currentConfig.ServerType = DOL.eGameServerType.GST_PvE;
+					currentConfig.ServerType = eGameServerType.GST_PvE;
 					break;
 				case "roleplay":
-					currentConfig.ServerType = DOL.eGameServerType.GST_Roleplay;
+					currentConfig.ServerType = eGameServerType.GST_Roleplay;
 					break;
 				case "casual":
-					currentConfig.ServerType = DOL.eGameServerType.GST_Casual;
+					currentConfig.ServerType = eGameServerType.GST_Casual;
 					break;
 				case "test":
-					currentConfig.ServerType = DOL.eGameServerType.GST_Test;
+					currentConfig.ServerType = eGameServerType.GST_Test;
 					break;
 				case "normal":
 				default:
-					currentConfig.ServerType = DOL.eGameServerType.GST_Normal;
+					currentConfig.ServerType = eGameServerType.GST_Normal;
 					break;
 			}
 
@@ -542,9 +524,9 @@ namespace DOLConfig
 			DialogResult result = property_editor.ShowDialog();
 			if (result == DialogResult.OK)
 			{
-				extra_options_datagrid.Rows[rowIndex].Cells["property"].Value = (object)property_editor.propertyName;
-				extra_options_datagrid.Rows[rowIndex].Cells["type"].Value = (object)property_editor.propertyType;
-				extra_options_datagrid.Rows[rowIndex].Cells["value"].Value = (object)property_editor.propertyValue;
+				extra_options_datagrid.Rows[rowIndex].Cells["property"].Value = (object)property_editor.PropertyName;
+				extra_options_datagrid.Rows[rowIndex].Cells["type"].Value = (object)property_editor.PropertyType;
+				extra_options_datagrid.Rows[rowIndex].Cells["value"].Value = (object)property_editor.PropertyValue;
 			}
 		}
 
@@ -555,7 +537,7 @@ namespace DOLConfig
 			if (result == DialogResult.OK)
 			{
 				//Add a new Row
-				DOLConfigParser.addExtraOptionsRow(extraOptions, property_editor.propertyName, property_editor.propertyType, (object)property_editor.propertyValue, "");
+				DOLConfigParser.addExtraOptionsRow(extraOptions, property_editor.PropertyName, property_editor.PropertyType, (object)property_editor.PropertyValue, "");
 			}
 		}
 

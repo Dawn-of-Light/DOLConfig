@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>..\build\DOLConfig\$(Configuration)\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>..\build\$(AssemblyName)\$(Configuration)\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
@@ -40,8 +40,8 @@
     <DelaySign>False</DelaySign>
     <NoWin32Manifest>False</NoWin32Manifest>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>..\build\DOLConfig\$(Configuration)\obj</IntermediateOutputPath>
+    <OutputPath>..\$(Configuration)\lib\</OutputPath>
+    <IntermediateOutputPath>..\build\$(AssemblyName)\$(Configuration)\obj</IntermediateOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
@@ -74,10 +74,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
-    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" ExcludeAssets="Runtime" />
-    <ProjectReference Include="..\DOLBase\DOLBase.csproj" Name="DOLBase" Private="False" ExcludeAssets="All" />
-    <ProjectReference Include="..\GameServer\GameServer.csproj" Name="GameServer" Private="False" ExcludeAssets="All" />
-    <ProjectReference Include="..\DOLDatabase\DOLDatabase.csproj" Name="DOLDatabase" Private="False" ExcludeAssets="All" />
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="MySqlConnector" Version="2.1.10" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="DOLConfig.cs" />
@@ -89,6 +88,10 @@
     <Content Include="icon.ico" />
   </ItemGroup>
   <Target Name="CopyFiles" AfterTargets="AfterBuild">
+    <ItemGroup>
+      <DolConfigFiles Include="$(OutDir)\$(AssemblyName).*" />
+    </ItemGroup>
+    <Move SourceFiles="@(DolConfigFiles)" DestinationFolder="$(OutDir)\..\" />
     <Copy SourceFiles="serverconfig_extraproperties.xml" DestinationFolder="$(MSBuildProjectDirectory)\..\$(Configuration)\lib\config\" />
   </Target>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
